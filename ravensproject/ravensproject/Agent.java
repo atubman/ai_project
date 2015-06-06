@@ -64,7 +64,9 @@ public class Agent {
     public int Solve(RavensProblem problem) {
     	System.out.println("Solving " + problem.getName());
     	System.out.println("================================");
-
+    	if(problem.getName().contains("10")){
+    		System.out.println("Breaky Breaky, eggs and Bakey");
+    	}
         int done = Solve2x2(problem);
         System.out.println("================================");
         return done;
@@ -101,30 +103,49 @@ public class Agent {
         // now lets find partners for C and it's potential solutions.
         ArrayList<RavensObjectPartners> cPartners = new ArrayList<>();
         for(RavensFigure posSolution : answerList){
-        	System.out.println("Finding partners between " + FigC.getName() + " and " + posSolution.getName());
-        	RavensObjectPartners tempPartners = new RavensObjectPartners(FigC.getName(), posSolution.getName());
-        	tempPartners.setItsPartners(FindPartners(FigC.getObjects(), posSolution.getObjects()));
-        	cPartners.add(tempPartners);
+        	if(objA.size() == objB.size() && objA.size() == objC.size() && posSolution.getObjects().size() != objC.size()){
+        		System.out.println("Solution " + posSolution.getName() + " Discarded due to wrong number of objects");
+        		
+        		//frames A-C have the same amount of objects. the answer should too.
+        	} else
+        	{
+	        	System.out.println("Finding partners between " + FigC.getName() + " and " + posSolution.getName());
+	        	RavensObjectPartners tempPartners = new RavensObjectPartners(FigC.getName(), posSolution.getName());
+	        	tempPartners.setItsPartners(FindPartners(FigC.getObjects(), posSolution.getObjects()));
+	        	cPartners.add(tempPartners);
+        	}
         }
         //we are now looking for the same set of transitions between the two.
         HashMap<String, Integer> SolutionScore = new HashMap<>();
         for(RavensObjectPartners CPotPart : cPartners){
         	System.out.println("Answer " + CPotPart.getNameObj2());
         	int answerScore = 0;
+        	//This is skipping any figures added to C
         	for(String AFigure : ACpartners.keySet()){
         		
         		String BFigure = ABPpartners.get(AFigure);
         		String CFigure = ACpartners.get(AFigure);
         		//the name of the object.
         		String DFigure = CPotPart.getItsDiffs().get(CFigure);
-        		
+        		System.out.println("D:" +DFigure);
+        		if(!DFigure.equals("none") && !BFigure.equals("none")){
         		RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
         		
         		System.out.println("Comparing " + AFigure + "-->" + BFigure + " To " + CFigure + "-->" +dRavensObject.getName());
-        		HashMap<String, String> ABDiffs = itsUtils.DiffRavensObjects(objA.get(AFigure), objB.get(BFigure));
-        		HashMap<String, String> CDDiffs = itsUtils.DiffRavensObjects(objC.get(CFigure), dRavensObject);
-        		
-        		answerScore += DiffTheDiffs(ABDiffs,CDDiffs);
+        			HashMap<String, String> ABDiffs = itsUtils.DiffRavensObjects(objA.get(AFigure), objB.get(BFigure));
+        			HashMap<String, String> CDDiffs = itsUtils.DiffRavensObjects(objC.get(CFigure), dRavensObject);
+        			answerScore += DiffTheDiffs(ABDiffs,CDDiffs);
+        		}
+        		else if((BFigure.equals("none" ) && DFigure.equals("none"))){
+        			System.out.println("the object dissapeared!");
+        		}else if(BFigure.equals("none")){
+        			System.out.println("The object only dissapeared from B!");
+        			
+        		}else{
+        			System.out.println("The object only dissapeared from solution!");
+        			answerScore++;
+        		}
+        		System.out.println("done");
         	}
         	SolutionScore.put(CPotPart.getNameObj2(), answerScore);
         }
@@ -215,7 +236,9 @@ public class Agent {
 						}
 					}
 				} else{
-					System.out.println("ERROR! No Partner for " + aName); //TODO: No partner found. 
+					System.out.println("ERROR! No Partner for " + aName); //TODO: No partner found.
+					partners.put(aName, "none");
+					System.out.println("Partners [ " + aName + ", none]");
 				}
 			}else 
 			{//no matches already
