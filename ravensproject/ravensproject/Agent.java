@@ -126,9 +126,16 @@ public class Agent {
         		String BFigure = ABPpartners.get(AFigure);
         		String CFigure = ACpartners.get(AFigure);
         		//the name of the object.
+        		
         		String DFigure = CPotPart.getItsDiffs().get(CFigure);
-        		System.out.println("D:" +DFigure);
-        		if(!DFigure.equals("none") && !BFigure.equals("none")){
+        		if(CFigure.equals("added")){
+        			DFigure = CPotPart.getItsDiffs().get(AFigure);
+        			RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
+        			System.out.println("Added " + objC.get(AFigure).getName()+ "-->" + dRavensObject.getName());
+        			int diffSize = itsUtils.DiffRavensObjects(objC.get(AFigure), dRavensObject).size();
+        			answerScore +=diffSize;
+        		}
+        		else if(!DFigure.equals("none") && !BFigure.equals("none")){
         		RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
         		
         		System.out.println("Comparing " + AFigure + "-->" + BFigure + " To " + CFigure + "-->" +dRavensObject.getName());
@@ -140,12 +147,12 @@ public class Agent {
         			System.out.println("the object dissapeared!");
         		}else if(BFigure.equals("none")){
         			System.out.println("The object only dissapeared from B!");
+        			answerScore++;
         			
         		}else{
         			System.out.println("The object only dissapeared from solution!");
-        			answerScore++;
+//        			answerScore +=2; //an object dissapearing is a major issue....
         		}
-        		System.out.println("done");
         	}
         	SolutionScore.put(CPotPart.getNameObj2(), answerScore);
         }
@@ -236,9 +243,8 @@ public class Agent {
 						}
 					}
 				} else{
-					System.out.println("ERROR! No Partner for " + aName); //TODO: No partner found.
 					partners.put(aName, "none");
-					System.out.println("Partners [ " + aName + ", none]");
+					System.out.println("Partners [ " + aName + ", removed]");
 				}
 			}else 
 			{//no matches already
@@ -251,6 +257,46 @@ public class Agent {
 			
 			
 			
+		}
+		//if any figures from B were not matched, we can guess that they were added and dont have a partner.
+		for (String bObj : objB.keySet()){
+			if(!partners.values().contains(bObj)){
+				System.out.println("Partners [ " + bObj + ",added]");
+				partners.put(bObj, "added");
+			}
+		}
+		return partners;
+	}
+	
+	@SuppressWarnings("unused")
+	private HashMap<String, String> FindPartners_2(
+			HashMap<String, RavensObject> objA,
+			HashMap<String, RavensObject> objB) {
+		
+		HashMap<String, String> partners = new HashMap<>();
+		PartnerSortUtil itsPartners = new PartnerSortUtil(objA, objB);
+		int counter = 0;
+		while( itsPartners.getComboSize() > 0){
+			
+			ArrayList<RavensPair<String, String>> allVals = itsPartners.getAllVals(counter);
+			for(RavensPair<String, String> itsVals: allVals ){
+				if (itsPartners.hasObj(itsVals.getL()) 
+						&& itsPartners.hasObj(itsVals.getR())){
+//					partners.put(itsVals.getL(), itsVals.getR());
+				}
+			}
+			
+			
+			
+		}
+		
+			
+		//if any figures from B were not matched, we can guess that they were added and dont have a partner.
+		for (String bObj : objB.keySet()){
+			if(!partners.values().contains(bObj)){
+				System.out.println("Partners [ " + bObj + ",added]");
+				partners.put(bObj, "added");
+			}
 		}
 		return partners;
 	}
