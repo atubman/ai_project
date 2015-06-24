@@ -5,24 +5,27 @@ import java.util.HashMap;
 /*
  * RavensObjectTransform.java
  * 
- * Keeps track of the artners and diffs between 2 Ravens objects.
+ * Keeps track of the partners and diffs between 2 Ravens Figures. This was used for 2x2 only.
  * 
  */
 
-public class RavensObjectPartners {
+public class RavensFigurePartners {
     private String nameObj1;
     private String nameObj2;
+    private int simScore;
     HashMap<String, String> partners;
   
-    public RavensObjectPartners(String name1,String name2, HashMap<String, String> diffs) {
+    public RavensFigurePartners(String name1,String name2, HashMap<String, String> diffs) {
         this.nameObj1=name1;
         this.nameObj2=name2;
         partners =diffs;
+        simScore = 0;
     }
-    public RavensObjectPartners(String name1,String name2) {
+    public RavensFigurePartners(String name1,String name2) {
     	this.nameObj1=name1;
     	this.nameObj2=name2;
     	partners =new HashMap<>();
+    	simScore = 0;
     }
 
 	public String getNameObj1() {
@@ -53,6 +56,12 @@ public class RavensObjectPartners {
 //			
 //		}
 //		System.out.println("");
+	}
+	public int getSimScore() {
+		return simScore;
+	}
+	public void setSimScore(int simScore) {
+		this.simScore = simScore;
 	}
 
 

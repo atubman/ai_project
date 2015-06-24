@@ -18,7 +18,7 @@ public class PartnerSortUtil {
 			HashMap<String,Integer> tempHash = new HashMap<String, Integer>();
 			for (String bObj : objB.keySet()) {
 				HashMap<String, String> diffs = itsUtils.DiffRavensObjects(
-						objA.get(aObj), objB.get(bObj));
+						objA.get(aObj), objB.get(bObj)).getR();
 				
 				tempHash.put( bObj, diffs.size());
 			}

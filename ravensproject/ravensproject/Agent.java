@@ -62,17 +62,64 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public int Solve(RavensProblem problem) {
-    	System.out.println("Solving " + problem.getName());
+    	System.out.println("Solving " + problem.getName() +  problem.getProblemType());
     	System.out.println("================================");
     	if(problem.getName().contains("10")){
+    		//for setting breakpoints based on problem name...
     		System.out.println("Breaky Breaky, eggs and Bakey");
     	}
-        int done = Solve2x2(problem);
+    	int answer =0;
+        if(problem.getProblemType().equals("3x3")) {
+        	answer = solve3x3(problem);
+		} else{
+				answer= Solve2x2(problem);
+				}
         System.out.println("================================");
-        return done;
+        return answer;
         
     }
-    public int Solve2x2(RavensProblem problem){
+    private int solve3x3(RavensProblem problem) {
+		// TODO Auto-generated method stub
+    	
+    	HashMap<String, RavensFigure> problems = new HashMap<>();
+    	
+    	problems.put("A", problem.getFigures().get("A"));
+    	problems.put("B", problem.getFigures().get("B"));
+    	problems.put("C", problem.getFigures().get("C"));
+    	problems.put("D", problem.getFigures().get("D"));
+    	problems.put("E", problem.getFigures().get("E"));
+    	problems.put("F", problem.getFigures().get("F"));
+    	problems.put("G", problem.getFigures().get("G"));
+    	problems.put("H", problem.getFigures().get("H"));
+        
+        ArrayList<RavensFigure> answerList = new ArrayList<>();
+        
+        
+        answerList.add(problem.getFigures().get("1"));
+        answerList.add(problem.getFigures().get("2"));
+        answerList.add(problem.getFigures().get("3"));
+        answerList.add(problem.getFigures().get("4"));
+        answerList.add(problem.getFigures().get("5"));
+        answerList.add(problem.getFigures().get("6"));
+        answerList.add(problem.getFigures().get("7"));
+        answerList.add(problem.getFigures().get("8"));
+        
+        HashMap<String, RavensObject> objA = problems.get("A").getObjects();
+        HashMap<String, RavensObject> objB = problems.get("B").getObjects();
+        HashMap<String, RavensObject> objC = problems.get("C").getObjects();
+        HashMap<String, RavensObject> objD = problems.get("D").getObjects();
+        HashMap<String, RavensObject> objE = problems.get("E").getObjects();
+        HashMap<String, RavensObject> objF = problems.get("F").getObjects();
+        HashMap<String, RavensObject> objG = problems.get("G").getObjects();
+        HashMap<String, RavensObject> objH = problems.get("H").getObjects();
+        
+        Transformation ABtrans= new Transformation(problems.get("A"), problems.get("B"));
+        Transformation BCtrans= new Transformation(problems.get("B"), problems.get("C"));
+        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
+        
+        return 0;
+    }
+	public int Solve2x2(RavensProblem problem){
         
     	RavensFigure FigA = problem.getFigures().get("A");
         RavensFigure FigB = problem.getFigures().get("B");
@@ -101,7 +148,7 @@ public class Agent {
         
         
         // now lets find partners for C and it's potential solutions.
-        ArrayList<RavensObjectPartners> cPartners = new ArrayList<>();
+        ArrayList<RavensFigurePartners> cPartners = new ArrayList<>();
         for(RavensFigure posSolution : answerList){
         	if(objA.size() == objB.size() && objA.size() == objC.size() && posSolution.getObjects().size() != objC.size()){
         		System.out.println("Solution " + posSolution.getName() + " Discarded due to wrong number of objects");
@@ -110,14 +157,14 @@ public class Agent {
         	} else
         	{
 	        	System.out.println("Finding partners between " + FigC.getName() + " and " + posSolution.getName());
-	        	RavensObjectPartners tempPartners = new RavensObjectPartners(FigC.getName(), posSolution.getName());
+	        	RavensFigurePartners tempPartners = new RavensFigurePartners(FigC.getName(), posSolution.getName());
 	        	tempPartners.setItsPartners(FindPartners(FigC.getObjects(), posSolution.getObjects()));
 	        	cPartners.add(tempPartners);
         	}
         }
         //we are now looking for the same set of transitions between the two.
         HashMap<String, Integer> SolutionScore = new HashMap<>();
-        for(RavensObjectPartners CPotPart : cPartners){
+        for(RavensFigurePartners CPotPart : cPartners){
         	System.out.println("Answer " + CPotPart.getNameObj2());
         	int answerScore = 0;
         	//This is skipping any figures added to C
@@ -132,15 +179,15 @@ public class Agent {
         			DFigure = CPotPart.getItsDiffs().get(AFigure);
         			RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
         			System.out.println("Added " + objC.get(AFigure).getName()+ "-->" + dRavensObject.getName());
-        			int diffSize = itsUtils.DiffRavensObjects(objC.get(AFigure), dRavensObject).size();
+        			int diffSize = itsUtils.DiffRavensObjects(objC.get(AFigure), dRavensObject).getR().size();
         			answerScore +=diffSize;
         		}
         		else if(!DFigure.equals("none") && !BFigure.equals("none")){
         		RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
         		
         		System.out.println("Comparing " + AFigure + "-->" + BFigure + " To " + CFigure + "-->" +dRavensObject.getName());
-        			HashMap<String, String> ABDiffs = itsUtils.DiffRavensObjects(objA.get(AFigure), objB.get(BFigure));
-        			HashMap<String, String> CDDiffs = itsUtils.DiffRavensObjects(objC.get(CFigure), dRavensObject);
+        			HashMap<String, String> ABDiffs = itsUtils.DiffRavensObjects(objA.get(AFigure), objB.get(BFigure)).getR();
+        			HashMap<String, String> CDDiffs = itsUtils.DiffRavensObjects(objC.get(CFigure), dRavensObject).getR();
         			answerScore += DiffTheDiffs(ABDiffs,CDDiffs);
         		}
         		else if((BFigure.equals("none" ) && DFigure.equals("none"))){
@@ -204,11 +251,11 @@ public class Agent {
 			HashMap<String, RavensObject> objB) {
 
 		HashMap<String, String> partners = new HashMap<>();
-		for(String aName : objA.keySet()){
+		for(String aName  : objA.keySet()){
 			HashMap<String, Integer> potentialMatch = new HashMap<>();
 			//record all the diffs
 			for(String bName : objB.keySet()){
-				HashMap<String, String > diffs = itsUtils.DiffRavensObjects(objA.get(aName), objB.get(bName));
+				HashMap<String, String > diffs = itsUtils.DiffRavensObjects(objA.get(aName), objB.get(bName)).getR();
 				potentialMatch.put(bName,diffs.size() );
 				
 			}
@@ -268,7 +315,6 @@ public class Agent {
 		return partners;
 	}
 	
-	@SuppressWarnings("unused")
 	private HashMap<String, String> FindPartners_2(
 			HashMap<String, RavensObject> objA,
 			HashMap<String, RavensObject> objB) {
