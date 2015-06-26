@@ -113,10 +113,17 @@ public class Agent {
         HashMap<String, RavensObject> objG = problems.get("G").getObjects();
         HashMap<String, RavensObject> objH = problems.get("H").getObjects();
         
-        Transformation ABtrans= new Transformation(problems.get("A"), problems.get("B"));
-        Transformation BCtrans= new Transformation(problems.get("B"), problems.get("C"));
-        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
+       Transformation ABtrans= new Transformation(problems.get("A"), problems.get("B"));
+        Transformation BCtrans= new Transformation(problems.get("H"), answerList.get(0));
+//        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
+        ArrayList<HashMap<String, String>> result = ABtrans.compareTo(BCtrans);
         
+        for(HashMap <String,String> theMap : result){
+        	for(String key : theMap.keySet()){
+        		System.out.println(key + ":" + theMap.get(key));
+        	}
+        	System.out.println("=================");
+        }
         return 0;
     }
 	public int Solve2x2(RavensProblem problem){
@@ -182,7 +189,7 @@ public class Agent {
         			int diffSize = itsUtils.DiffRavensObjects(objC.get(AFigure), dRavensObject).getR().size();
         			answerScore +=diffSize;
         		}
-        		else if(!DFigure.equals("none") && !BFigure.equals("none")){
+        		else if(!DFigure.equals("removed") && !BFigure.equals("removed")){
         		RavensObject dRavensObject = problem.getFigures().get(CPotPart.getNameObj2()).getObjects().get(DFigure);
         		
         		System.out.println("Comparing " + AFigure + "-->" + BFigure + " To " + CFigure + "-->" +dRavensObject.getName());
@@ -190,9 +197,9 @@ public class Agent {
         			HashMap<String, String> CDDiffs = itsUtils.DiffRavensObjects(objC.get(CFigure), dRavensObject).getR();
         			answerScore += DiffTheDiffs(ABDiffs,CDDiffs);
         		}
-        		else if((BFigure.equals("none" ) && DFigure.equals("none"))){
+        		else if((BFigure.equals("removed" ) && DFigure.equals("removed"))){
         			System.out.println("the object dissapeared!");
-        		}else if(BFigure.equals("none")){
+        		}else if(BFigure.equals("removed")){
         			System.out.println("The object only dissapeared from B!");
         			answerScore++;
         			
@@ -290,7 +297,7 @@ public class Agent {
 						}
 					}
 				} else{
-					partners.put(aName, "none");
+					partners.put(aName, "removed");
 					System.out.println("Partners [ " + aName + ", removed]");
 				}
 			}else 
@@ -315,35 +322,4 @@ public class Agent {
 		return partners;
 	}
 	
-	private HashMap<String, String> FindPartners_2(
-			HashMap<String, RavensObject> objA,
-			HashMap<String, RavensObject> objB) {
-		
-		HashMap<String, String> partners = new HashMap<>();
-		PartnerSortUtil itsPartners = new PartnerSortUtil(objA, objB);
-		int counter = 0;
-		while( itsPartners.getComboSize() > 0){
-			
-			ArrayList<RavensPair<String, String>> allVals = itsPartners.getAllVals(counter);
-			for(RavensPair<String, String> itsVals: allVals ){
-				if (itsPartners.hasObj(itsVals.getL()) 
-						&& itsPartners.hasObj(itsVals.getR())){
-//					partners.put(itsVals.getL(), itsVals.getR());
-				}
-			}
-			
-			
-			
-		}
-		
-			
-		//if any figures from B were not matched, we can guess that they were added and dont have a partner.
-		for (String bObj : objB.keySet()){
-			if(!partners.values().contains(bObj)){
-				System.out.println("Partners [ " + bObj + ",added]");
-				partners.put(bObj, "added");
-			}
-		}
-		return partners;
-	}
 }
