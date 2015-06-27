@@ -45,10 +45,10 @@ public class RavensDiffs {
 		
 		itsDiffs = itsUtils.NewDiffRavensObjects(objA, objB).getR();
 		
-		System.out.println("DIFFS " + objA.getName() + "-->" + objB.getName());
-		for (String diffy: itsDiffs.keySet()){
-			System.out.println(diffy + ":" + itsDiffs.get(diffy));
-		}
+//		System.out.println("DIFFS " + objA.getName() + "-->" + objB.getName());
+//		for (String diffy: itsDiffs.keySet()){
+//			System.out.println(diffy + ":" + itsDiffs.get(diffy));
+//		}
 	}
 	
 }

@@ -74,7 +74,7 @@ public class Transformation {
 		ArrayList<RavensDiffs> otherDiffs = other.getDiffs();
 		ArrayList<HashMap<String, String>> matchedDiffs = new ArrayList<>();
 		int runningSim = 0;
-		while (myDiffs.size() > 0) {
+		while (myDiffs.size() > 0 && otherDiffs.size()>0) {
 			RavensDiffs tempaDiff = null;
 			RavensDiffs tempbDiff = null;
 			int simScore = -100;
@@ -118,7 +118,14 @@ public class Transformation {
 			
 
 		}
-
+//		System.out.println(otherDiffs.size() + ": "+ myDiffs.size() );
+		
+		for(RavensDiffs diff : otherDiffs){
+			matchedDiffs.add(diff.getItsDiffs());
+		}
+		for(RavensDiffs diff : myDiffs){
+			matchedDiffs.add(diff.getItsDiffs());
+		}
 		return matchedDiffs;
 
 	}

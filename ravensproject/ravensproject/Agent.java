@@ -112,18 +112,57 @@ public class Agent {
         HashMap<String, RavensObject> objF = problems.get("F").getObjects();
         HashMap<String, RavensObject> objG = problems.get("G").getObjects();
         HashMap<String, RavensObject> objH = problems.get("H").getObjects();
+        AnswerFilter filter = new AnswerFilter();
+        
+        answerList = filter.FilterAnsweers(answerList, problems);
+        System.out.println("removed " + (8-answerList.size()) + "answers");
         
        Transformation ABtrans= new Transformation(problems.get("A"), problems.get("B"));
-        Transformation BCtrans= new Transformation(problems.get("H"), answerList.get(0));
 //        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
-        ArrayList<HashMap<String, String>> result = ABtrans.compareTo(BCtrans);
+        HashMap <String, Integer> answerScores = new HashMap<>();
         
-        for(HashMap <String,String> theMap : result){
-        	for(String key : theMap.keySet()){
-        		System.out.println(key + ":" + theMap.get(key));
+        for(RavensFigure answer : answerList){
+        	Transformation tempTrans= new Transformation(problems.get("H"), answer);
+        	ArrayList<HashMap<String, String>> result = ABtrans.compareTo(tempTrans);
+        	
+        	int score = 0;
+        	for(HashMap<String, String> mappy: result){
+        		score += mappy.size();
         	}
-        	System.out.println("=================");
+        	answerScores.put(answer.getName(),score);
         }
+        
+        
+
+        int solInt = 1;
+        int lowestScore =9999;
+        for (String elem : answerScores.keySet()){
+     	   System.out.println(elem + ':' + answerScores.get(elem));
+     	   if( answerScores.get(elem)< lowestScore){
+     		   lowestScore = answerScores.get(elem);
+     	   }
+        }
+        ArrayList<String> potentialAnswer = new ArrayList<>();
+       for (String elem : answerScores.keySet()){
+    	   if(answerScores.get(elem) == lowestScore){
+    		   potentialAnswer.add(elem);
+    	   }
+       }
+        if(potentialAnswer.size() == 1){
+        	solInt = Integer.parseInt(potentialAnswer.get(0));
+        } else {
+        	System.out.println("Potentials answers size: " + potentialAnswer.size());
+        	int guess = (int) (((int)(Math.random()*10) % potentialAnswer.size()));
+        	System.out.println("guess:" + guess);
+        	solInt = Integer.parseInt(potentialAnswer.get(guess));
+        }
+        	
+        	
+        	problem.setAnswerReceived(solInt);
+        
+        
+        System.out.println("[Actual,Guess] : [" + solInt + "," + problem.checkAnswer(solInt) + "] " + problem.getCorrect());
+        
         return 0;
     }
 	public int Solve2x2(RavensProblem problem){

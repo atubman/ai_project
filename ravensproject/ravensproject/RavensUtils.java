@@ -19,6 +19,8 @@ public class RavensUtils {
 	public static final int FILL_WEIGHT = 3;
 	public static final int SIZE_WEIGHT = 3;
 	public static final int OTHER_WEIGHT = 1;
+	private static final String LEFTOF = "left-of";
+	private static final String OVERLAPS = "overlaps";
 
 	public HashMap<String, Integer> sizeList;
 
@@ -196,18 +198,18 @@ public class RavensUtils {
 					}
 				} else {
 					partners.put(aName, "removed");
-					System.out.println("Partners [ " + aName + ", removed]");
+//					System.out.println("Partners [ " + aName + ", removed]");
 				}
 			} else {// no matches already
 				if(potentialPotential.compareTo("") ==0){
 					partners.put(aName, "removed");
-					System.out.println("Partners [ " + aName + ", removed]");
+//					System.out.println("Partners [ " + aName + ", removed]");
 					
 				} else{
 				partners.put(aName, potentialPotential);
 				
-				System.out.println("Partners [ " + aName + ","
-						+ potentialPotential + "]");
+//				System.out.println("Partners [ " + aName + ","
+//						+ potentialPotential + "]");
 				}
 			}
 
@@ -238,7 +240,7 @@ public class RavensUtils {
 							.get(aAttribType))
 							- Integer.parseInt(fig2Atrib.get(aAttribType)));
 
-					System.out.println("Angle diff:" + angleChange);
+//					System.out.println("Angle diff:" + angleChange);
 					if (angleChange > 0) {
 						diffs.put(ANGLE, angleChange + "");
 					} else {
@@ -255,7 +257,10 @@ public class RavensUtils {
 					} else {
 						diffs.put(aAttribType, SizeChange(aSize, bSize));
 					}
-				} else if (aAttribType.equals(ABOVE)) {
+				} else if (aAttribType.equals(ABOVE) 
+							||aAttribType.equals(INSIDE)
+							|| aAttribType.equals(LEFTOF)
+							|| aAttribType.equals(OVERLAPS)){
 
 					// we dont really care who it's above when we diff it, just
 					// taht it's still above something
@@ -264,24 +269,11 @@ public class RavensUtils {
 					numAAbove = fig1Atrib.get(aAttribType).split(",").length;
 					numBAbove = fig2Atrib.get(aAttribType).split(",").length;
 					if (numAAbove != numBAbove) {
-						diffs.put(ABOVE, numBAbove + "");
+						diffs.put(aAttribType, numBAbove + "");
 					} else {
 						simScore += OTHER_WEIGHT;
 					}
-				} else if (aAttribType.equals(INSIDE)) {
-
-					// we dont really care who it's above when we diff it, just
-					// taht it's still above something
-					int numAAbove = 0;
-					int numBAbove = 0;
-					numAAbove = fig1Atrib.get(aAttribType).split(",").length;
-					numBAbove = fig2Atrib.get(aAttribType).split(",").length;
-					if (numAAbove != numBAbove) {
-						diffs.put(INSIDE, numBAbove + "");
-					} else {
-						simScore += OTHER_WEIGHT;
-					}
-				} else if (fig2Atrib.get(aAttribType).compareTo(
+				}  else if (fig2Atrib.get(aAttribType).compareTo(
 						fig1Atrib.get(aAttribType)) != 0) {
 					diffs.put(aAttribType, fig2Atrib.get(aAttribType));
 
