@@ -55,7 +55,7 @@ public class RavensUtils {
 							.get(aAttribType))
 							- Integer.parseInt(fig2Atrib.get(aAttribType)));
 
-					System.out.println("Angle diff:" + angleChange);
+					//System.out.println("Angle diff:" + angleChange);
 					if (angleChange > 0) {
 						diffs.put(ANGLE, angleChange + "");
 					} else {

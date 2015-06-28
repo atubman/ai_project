@@ -117,7 +117,7 @@ public class Agent {
         answerList = filter.FilterAnsweers(answerList, problems);
         System.out.println("removed " + (8-answerList.size()) + "answers");
         
-       Transformation ABtrans= new Transformation(problems.get("A"), problems.get("B"));
+       Transformation ABtrans= new Transformation(problems.get("B"), problems.get("C"));
 //        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
         HashMap <String, Integer> answerScores = new HashMap<>();
         
@@ -131,8 +131,26 @@ public class Agent {
         	}
         	answerScores.put(answer.getName(),score);
         }
+        Transformation DGtrans= new Transformation(problems.get("D"), problems.get("G"));
+//        Transformation GHtrans= new Transformation(problems.get("G"), problems.get("H"));
+        HashMap <String, Integer> vertAnswerScores = new HashMap<>();
         
+        for(RavensFigure answer : answerList){
+        	Transformation tempTrans= new Transformation(problems.get("F"), answer);
+        	ArrayList<HashMap<String, String>> result = ABtrans.compareTo(tempTrans);
+        	
+        	int score = 0;
+        	for(HashMap<String, String> mappy: result){
+        		score += mappy.size();
+        	}
+        	vertAnswerScores.put(answer.getName(),score);
+        }
         
+        System.out.println("========VERTICAL=======");
+        for(String key : vertAnswerScores.keySet()){
+        	System.out.println(key + ":" + vertAnswerScores.get(key));
+        }
+        System.out.println("========HORIZONTAL=======");
 
         int solInt = 1;
         int lowestScore =9999;
