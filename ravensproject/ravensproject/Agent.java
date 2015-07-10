@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 // Uncomment these lines to access image processing.
 //import java.awt.Image;
 //import java.io.File;
@@ -33,8 +34,10 @@ public class Agent {
      */
 	
 	RavensUtils itsUtils;
+	VisualTools itsVisualTools;
     public Agent() {
         itsUtils = new RavensUtils();
+        itsVisualTools = new VisualTools();
     }
     /**
      * The primary method for solving incoming Raven's Progressive Matrices.
@@ -64,12 +67,16 @@ public class Agent {
     public int Solve(RavensProblem problem) {
     	System.out.println("Solving " + problem.getName() +  problem.getProblemType());
     	System.out.println("================================");
+    	
     	if(problem.getName().contains("10")){
     		//for setting breakpoints based on problem name...
     		System.out.println("Breaky Breaky, eggs and Bakey");
     	}
     	int answer =0;
-        if(problem.getProblemType().equals("3x3")) {
+    	if(!problem.hasVerbal()){
+    		answer = solve3x3Visual(problem);
+    	}
+    	else if(problem.getProblemType().equals("3x3")) {
         	answer = solve3x3(problem);
 		} else{
 				answer= Solve2x2(problem);
@@ -77,6 +84,14 @@ public class Agent {
         System.out.println("================================");
         return answer;
         
+    }
+    private int solve3x3Visual(RavensProblem problem) {
+    	VisualAgent vAgent = new VisualAgent(problem);
+    	int answer =  vAgent.Solve3x3();
+    	
+    	problem.setAnswerReceived(answer);
+    	 System.out.println("[Actual,Guess] : [" + answer + "," + problem.checkAnswer(answer) + "] " + problem.getCorrect());
+    	return answer;
     }
     private int solve3x3(RavensProblem problem) {
 		// TODO Auto-generated method stub
